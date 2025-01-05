@@ -45,3 +45,7 @@
       path: /home/kartikey
       state: touch
 
+- name: copy a file
+  command: mv /root/mumbaigit/myfile to /root/londongit
+
+
