@@ -25,4 +25,15 @@
   src: srv/httpd.j2
   dest: /etc/httpd.conf
 
-
+- name: Update on OFAC Program line
+  lineinfile:
+    path: /{{ARC_CUST_TOP}}/bin/arc_ofac_sql.prog
+    regexp: "^\\$ARC*"
+    line: "#ARC_CUST_TOP/bin/arc_ofac_ftp"
+    backrefs: yes
+    state: present
+register: k
+tags:
+  - gg
+- debug:
+    var: k
