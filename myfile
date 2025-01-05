@@ -1,0 +1,28 @@
+---
+- name: automation	
+  hosts: "{{ hosts }}"
+  become: true
+  gather_facts: yes
+  vars_prompt:
+    - name: "vars_file"
+      prompt: "Which var file do you want to use? (dev/test/prod)  
+      private: no
+
+
+- name: Update webservers
+  hosts: all
+  remote_user: root
+  
+
+  tasks:
+    - name: Apache update
+      ansible.builtin.yum: 
+      name: httpd
+      state: latest
+
+- name: Apache conflict file
+  ansiblebuildin.template:
+  src: srv/httpd.j2
+  dest: /etc/httpd.conf
+
+
