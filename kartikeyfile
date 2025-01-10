@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# check if there are input files
+
+input file="input.txt"
+if [ ! -f "$input_file" ]; them
+echo "Error: inputfile '$inputfile' not found. "
+exit 1
+fi
+
+# Outfile file to log the copies files and errors
+output_files="copied_files.log"
+
