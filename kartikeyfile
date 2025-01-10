@@ -1,0 +1,53 @@
+#!/bin/bash
+# Read input data line by line from the input file
+while IFS= read -r line || [[ -n "$line" ]]; do
+# Extract remote server IP and destination path from the current 
+line
+remote_server_ip=$(echo "$line" | awk '{print $1}')
+destination_path=$(echo "$line" | awk '{print $2}')
+
+# Display what is being read from the input file for 
+troubleshooting
+echo "Reading from input file:"
+echo "REMOTE_SERVER_IP=$remote_server_ip"
+echo "DESTINATION_PATH=$destination_path"
+echo "-----------------------------"
+
+# Check if remote server IP and destination path are provided
+if [ -z "$remote_server_ip" ] || [ -z "$destination_path" ]; then
+    echo "Error: Remote server IP or destination path not provided 
+in the input file." >> "$output_file"
+else
+    # List of files to copy
+    files_to_copy=("file1.txt" "file2.txt" "file3.txt")
+
+    # Copy files to the remote server using scp and log the 
+details/errors to the output file
+    for file in "${files_to_copy[@]}"; do
+        # Check if the file exists in the destination folder
+        ssh "$remote_server_ip" "[ -e \"$destination_path/$file\" 
+]"
+        if [ $? -eq 0 ]; then
+            echo "File: '$file', Server IP: '$remote_server_ip', 
+Destination Path: '$destination_path' - Already Exists" >> 
+"$output_file"
+        else
+            # Attempt to copy the file
+            scp "$file" "$remote_server_ip":"$destination_path" 2>> 
+"$output_file"
+            if [ $? -eq 0 ]; then
+                echo "File: '$file', Server IP: 
+'$remote_server_ip', Destination Path: '$destination_path' - Copy 
+Successful" >> "$output_file"
+            else
+                echo "File: '$file', Server IP: 
+'$remote_server_ip', Destination Path: '$destination_path' - Copy 
+Failed" >> "$output_file"
+            fi
+        fi
+    done
+fi
+done < "$input_file"
+
+echo "Copying process completed. Details/errors logged in 
+'$output_file'."
